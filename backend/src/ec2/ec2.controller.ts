@@ -14,4 +14,9 @@ export class Ec2Controller {
   getAvailableZone() {
     return this.ec2Service.getAvailableZone();
   }
+
+  @Get('/imageList')
+  getImageList() {
+    return this.ec2Service.getImageList();
+  }
 }
