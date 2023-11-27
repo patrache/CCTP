@@ -1,0 +1,8 @@
+body {
+    background-color: #B4BDFF40;
+    padding: 20px;   
+}
+
+a:-webkit-any-link {
+    text-decoration: none !important;
+}
