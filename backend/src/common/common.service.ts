@@ -7,12 +7,18 @@ import {
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { AwsService } from 'src/aws/aws.service';
 import { ImageModel, RegionModel, ZoneModel } from './model';
+import { CacheService } from 'src/cache/cache.service';
 
 @Injectable()
 export class CommonService {
   private ec2Client: EC2Client = this.awsService.getEC2Client();
 
-  constructor(private awsService: AwsService) {}
+  constructor(
+    private awsService: AwsService,
+    private cacheService: CacheService,
+  ) {
+    this.getImageList();
+  }
 
   getCurrentRegion() {
     try {
@@ -57,8 +63,8 @@ export class CommonService {
       const command = new DescribeImagesCommand({
         Owners: ['self'],
       });
-      const response = await this.ec2Client.send(command);
-      return response.Images.map(
+      const awsResponse = await this.ec2Client.send(command);
+      const response = awsResponse.Images.map(
         (image) =>
           new ImageModel(
             image.ImageId,
@@ -68,6 +74,8 @@ export class CommonService {
             image.VirtualizationType,
           ),
       );
+      this.cacheService.set('imageList', response);
+      return response;
     } catch (error) {
       console.error('Error fetching AWS Ec2 AMI', error);
       throw new InternalServerErrorException('Unable to fetch AWS AMI Images');
