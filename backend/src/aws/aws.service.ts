@@ -5,13 +5,14 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class AwsService {
   private ec2Client: EC2Client;
+  private region = 'ap-northeast-2';
 
   constructor(config: ConfigService) {
     const accessKeyId = config.get('AWS_ACCESS_KEY_ID');
     const secretAccessKey = config.get('AWS_SECRET_ACCESS_KEY');
 
     this.ec2Client = new EC2Client({
-      region: 'ap-northeast-2',
+      region: this.region,
       credentials: {
         accessKeyId: accessKeyId,
         secretAccessKey: secretAccessKey,
@@ -21,5 +22,9 @@ export class AwsService {
 
   getEC2Client() {
     return this.ec2Client;
+  }
+
+  getRegion() {
+    return this.region;
   }
 }
