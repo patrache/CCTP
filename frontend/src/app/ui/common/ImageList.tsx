@@ -17,10 +17,10 @@ const Title = styled.div`
 `;
 
 const ImageWrapper = styled.div`
-  margin: 4px 0px 8px 0px;
+  margin: 8px 0px 8px 0px;
   padding: 6px;
   border-radius: 12px;
-  background-color: #83a2ff40;
+  background-color: #83a2ff20;
   color: #484848;
 `;
 
@@ -29,6 +29,7 @@ const ImageHeader = styled.div`
   font-weight: 700;
   justify-content: center;
   margin-bottom: 4px;
+  padding: 4px;
 `;
 
 const ImageItemWrapper = styled.div`

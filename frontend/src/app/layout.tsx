@@ -9,8 +9,6 @@ export const metadata: Metadata = {
   description: 'Cloud Computing Term Project',
 }
 
-
-
 export default function RootLayout({
   children,
 }: {
@@ -22,6 +20,3 @@ export default function RootLayout({
     </html>
   )
 }
-
-
-
