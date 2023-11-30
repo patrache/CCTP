@@ -2,7 +2,10 @@
 
 import InstanceControlButtons from "@/app/ui/ec2/instanceControlButton";
 import InstanceList from "@/app/ui/ec2/instanceList";
+import { useState } from "react";
 import styled from "styled-components";
+
+const DetailList = ["info", "state", "console"];
 
 const ButtonContainer = styled.div`
   position: absolute;
@@ -13,15 +16,66 @@ const ButtonContainer = styled.div`
   /* border: 1px solid black; */
   display: flex;
   justify-content: space-between;
-`
+`;
+
+const InstanceDetailSelectWrapper = styled.div`
+  margin-top: 24px;
+  display: flex;
+`;
+
+const InstanceDetailSelect = styled.div<{ isSelected: boolean }>`
+  background-color: ${(props) => (props.isSelected ? "#B4BDFF40" : "white")};
+  border-radius: 10px 10px 0px 0px;
+  padding: 12px;
+  color: #484848;
+  cursor: pointer;
+`;
+
+const InstanceDetail = styled.div`
+  background-color: white;
+  border-radius: 0px 10px 10px 10px;
+  width: 100%;
+  height: 50px;
+  padding: 8px;
+`;
 
 export default function DashBoardEc2() {
+  const [selectedItem, setSelect] = useState("info");
+
   return (
     <>
       <ButtonContainer>
-        <InstanceControlButtons/>
+        <InstanceControlButtons />
       </ButtonContainer>
-      <InstanceList/>
+      <InstanceList />
+      <InstanceDetailSelectWrapper>
+        {DetailList.map((item) => {
+          const isSelected = selectedItem === item;
+          return (
+            <InstanceDetailSelect
+              key={item}
+              isSelected={isSelected}
+              onClick={() => setSelect(item)}
+            >
+              {item}
+            </InstanceDetailSelect>
+          );
+        })}
+      </InstanceDetailSelectWrapper>
+      <InstanceDetail>
+      {(() => {
+        switch (selectedItem) {
+          case "info":
+            return <>info</>;
+          case "state":
+            return <>state</>;
+          case "console":
+            return <>console</>;
+          default:
+            return <>fuxk!</>;
+        }
+      })()}
+      </InstanceDetail >
     </>
   );
 }
