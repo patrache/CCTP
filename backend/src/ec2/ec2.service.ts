@@ -24,7 +24,10 @@ export class Ec2Service {
         const image = imageList.find(
           (image) => image.id === selectedInstance.ImageId,
         );
-        const imageName = image ? image.name : selectedInstance.ImageId;
+        let imageName = image ? image.name : selectedInstance.ImageId;
+        // TODO: 처음 만들어진 인스턴스를 없앨 때 지워줘야함.
+        if (imageName === 'ami-09e70258ddbdf3c90')
+          imageName = 'htcondor-master';
 
         const instanceType = selectedInstance.InstanceType;
         const state = selectedInstance.State.Name;
