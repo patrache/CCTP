@@ -4,7 +4,6 @@ import {
   getCurrentRegions,
 } from "@/lib/api/common.api";
 import { RegionModel, ZoneModel } from "@/lib/model/common";
-import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 

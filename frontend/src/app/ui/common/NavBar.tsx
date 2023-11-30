@@ -11,10 +11,8 @@ type LinkContentProps = {
 };
 
 const NavBarWrapper = styled.div`
-
   width: 282px;
   border-radius: 10px;
-  margin-right: 20px;
 `;
 
 const ProjectTitleWrapper = styled.div`
