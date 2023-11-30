@@ -25,7 +25,7 @@ type InstanceItemProps = {
 
 const InstanceListContainer = styled.div`
   width: 100%;
-  height: 400px;
+  height: 300px;
   background-color: #ffffff;
   border-radius: 10px;
   overflow: scroll;

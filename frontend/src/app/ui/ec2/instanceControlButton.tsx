@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { FaPlus, FaPlay, FaRedoAlt, FaStop, FaPause } from "react-icons/fa";
 import React from "react";
+import { UseEc2Store } from "@/lib/store/useEc2Store";
 
 const buttonList = [
   "StartButton",
@@ -24,19 +25,36 @@ const ButtonWrapper = styled.div<InstanceButtonProps>`
   border-radius: 10px;
   cursor: pointer;
   background-color: ${(props) => {
-    switch (props.role) {
-      case "StartButton":
-        return "#77dd7780";
-      case "RebootButotn":
-        return "#ffdb96e0";
-      case "StopButton":
-        return "#ffb34780";
-      case "DeleteButton":
-        return "#ff696180";
-      case "CreateButton":
-        return "#BEADFAC0";
-      default:
-        return "white"; // 기본값은 흰색
+    if (props.state === "running") {
+      switch (props.role) {
+        case "StartButton":
+          return "#bbb";
+        case "RebootButotn":
+          return "#ffdb96e0";
+        case "StopButton":
+          return "#ffb34780";
+        case "DeleteButton":
+          return "#ff696180";
+        case "CreateButton":
+          return "#BEADFAC0";
+        default:
+          return "white";
+      }
+    } else {
+      switch (props.role) {
+        case "StartButton":
+          return "#77dd7780";
+        case "RebootButotn":
+          return "#ffdb96e0";
+        case "StopButton":
+          return "#ffb34780";
+        case "DeleteButton":
+          return "#ff696180";
+        case "CreateButton":
+          return "#BEADFAC0";
+        default:
+          return "white";
+      }
     }
   }};
 `;
@@ -89,11 +107,17 @@ function buttonCase(button: string) {
 }
 
 export default function InstanceControlButtons() {
+  const selectedInstance = UseEc2Store((state) => state.selectedInstance);
+
   return (
     <>
       {buttonList.map((button) => {
         return (
-          <ButtonWrapper key={button} role={button}>
+          <ButtonWrapper
+            key={button}
+            role={button}
+            state={selectedInstance?.state}
+          >
             {buttonCase(button)}
           </ButtonWrapper>
         );
