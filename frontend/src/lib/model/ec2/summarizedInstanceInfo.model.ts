@@ -6,6 +6,7 @@ export class SummarizedEc2InstanceModel {
         public state: string,
         public publicDNS: string,
         public publicIP: string,
-        public zone: string
+        public zone: string,
+        public instanceId: string,
     ) {}
 }

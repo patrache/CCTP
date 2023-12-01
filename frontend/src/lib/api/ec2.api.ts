@@ -1,4 +1,4 @@
-import { SummarizedEc2InstanceModel } from "../model/ec2";
+import { Ec2DetailInfoModel, SummarizedEc2InstanceModel } from "../model/ec2";
 
 export const getInstanceList = async () => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -13,3 +13,15 @@ export const getInstanceList = async () => {
   return data;
 };
   
+export const getInstanceDetailInfo = async (id: string) => {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  const response = await fetch(`http://localhost:3000/ec2/instanceDetail/info/${id}`, {
+    method: "GET",
+  });
+  if (!response.ok) {
+    throw new Error("Failed to get instance detail info");
+  }
+  const data: Ec2DetailInfoModel = await response.json();
+  return data;
+}

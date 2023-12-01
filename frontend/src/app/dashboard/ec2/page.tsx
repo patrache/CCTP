@@ -1,6 +1,7 @@
 "use client";
 
 import InstanceControlButtons from "@/app/ui/ec2/instanceControlButton";
+import Ec2InstanceDetailInfo from "@/app/ui/ec2/instanceInfo";
 import InstanceList from "@/app/ui/ec2/instanceList";
 import { useState } from "react";
 import styled from "styled-components";
@@ -35,7 +36,7 @@ const InstanceDetail = styled.div`
   background-color: white;
   border-radius: 0px 10px 10px 10px;
   width: 100%;
-  height: 50px;
+  height: 446px;
   padding: 8px;
 `;
 
@@ -66,7 +67,7 @@ export default function DashBoardEc2() {
       {(() => {
         switch (selectedItem) {
           case "info":
-            return <>info</>;
+            return <Ec2InstanceDetailInfo/>;
           case "state":
             return <>state</>;
           case "console":
