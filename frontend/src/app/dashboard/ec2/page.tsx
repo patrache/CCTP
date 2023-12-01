@@ -73,7 +73,7 @@ export default function DashBoardEc2() {
           case "console":
             return <>console</>;
           default:
-            return <>fuxk!</>;
+            return <>somethings wrong...</>;
         }
       })()}
       </InstanceDetail >
