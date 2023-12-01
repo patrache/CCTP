@@ -54,11 +54,11 @@ const InstanceInfo = styled.div<InstanceItemProps>`
       case 4:
         return 3;
       case 3:
-        return 1;
+        return 1.4;
       case 2:
-        return 1.5;
+        return 1.3;
       default:
-        return 2;
+        return 1.6;
     }
   }};
 `;

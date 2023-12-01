@@ -40,14 +40,44 @@ const ButtonWrapper = styled.div<InstanceButtonProps>`
         default:
           return "white";
       }
-    } else {
+    } else if(props.state === "stopped") {
       switch (props.role) {
         case "StartButton":
           return "#77dd7780";
         case "RebootButotn":
-          return "#ffdb96e0";
+          return "#bbb";
         case "StopButton":
-          return "#ffb34780";
+          return "#bbb";
+        case "DeleteButton":
+          return "#ff696180";
+        case "CreateButton":
+          return "#BEADFAC0";
+        default:
+          return "white";
+      }
+    } else if(props.state === "terminated" || props.state === "shutting-down") {
+      switch (props.role) {
+        case "StartButton":
+          return "#bbb";
+        case "RebootButotn":
+          return "#bbb";
+        case "StopButton":
+          return "#bbb";
+        case "DeleteButton":
+          return "#bbb";
+        case "CreateButton":
+          return "#BEADFAC0";
+        default:
+          return "white";
+      }
+    } else if(props.state === "stopping" || props.state === "pending") {
+      switch (props.role) {
+        case "StartButton":
+          return "#bbb";
+        case "RebootButotn":
+          return "#bbb";
+        case "StopButton":
+          return "#bbb";
         case "DeleteButton":
           return "#ff696180";
         case "CreateButton":

@@ -19,15 +19,17 @@ const DetailItem = styled.div`
 `;
 
 export default function Ec2InstanceDetailInfo() {
-  const [instanceDetail, setInstanceDetail] = useState<Ec2DetailInfoModel>();
+  const [instanceDetail, setInstanceDetail] = useState<Ec2DetailInfoModel|string>();
   const selectedInstance = UseEc2Store((state) => state.selectedInstance);
 
   useEffect(() => {
     async function fetchData() {
       setInstanceDetail(undefined);
-      if (selectedInstance) {
+      if (selectedInstance && selectedInstance.state !== "terminated") {
         const data = await getInstanceDetailInfo(selectedInstance.instanceId);
         setInstanceDetail(data);
+      } if(selectedInstance?.state === "terminated") {
+        setInstanceDetail(new Ec2DetailInfoModel());
       }
     }
 
