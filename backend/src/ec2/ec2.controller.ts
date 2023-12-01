@@ -14,4 +14,29 @@ export class Ec2Controller {
   async getInstanceInfo(@Param() params: any) {
     return await this.ec2Service.getInstanceDetailInfo(params.id);
   }
+
+  @Get('operation/start')
+  async startInstance() {
+    return { test: 'starting...' };
+  }
+
+  @Get('operation/reboot')
+  async rebootInstance() {
+    return { test: 'rebooting...' };
+  }
+
+  @Get('operation/stop')
+  async stopInstance() {
+    return { test: 'stopping...' };
+  }
+
+  @Get('operation/delete')
+  async deleteInstance() {
+    return { test: 'deleting...' };
+  }
+
+  @Get('operation/create')
+  async createInstance() {
+    return { test: 'creating...' };
+  }
 }
