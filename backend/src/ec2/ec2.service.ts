@@ -62,7 +62,7 @@ export class Ec2Service {
       const image = imageList.find((image) => image.id === instance.ImageId);
       let imageName = image ? image.name : instance.ImageId;
       if (imageName === 'ami-09e70258ddbdf3c90') imageName = 'htcondor-master';
-      return new Ec2InstanceDetailInfo(instance, image);
+      return new Ec2InstanceDetailInfo(instance, imageName);
     } catch (error) {
       console.error('Error get instance lists:', error);
       throw new InternalServerErrorException('Unable to get instance lists');

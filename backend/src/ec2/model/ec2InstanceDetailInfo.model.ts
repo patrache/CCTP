@@ -48,7 +48,7 @@ export class Ec2InstanceDetailInfo {
   cpuCore: number;
 
   constructor(instance: Instance, imageName: string) {
-    this.instanceName = instance.Tags[0].Key;
+    this.instanceName = instance.Tags[0].Value;
     this.instanceId = instance.InstanceId;
     this.imageName = imageName;
     this.imageId = instance.ImageId;
