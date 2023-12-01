@@ -1,7 +1,7 @@
 import { DescribeInstancesCommand, EC2Client } from '@aws-sdk/client-ec2';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { AwsService } from 'src/aws/aws.service';
-import { SummarizedEc2InstanceModel } from './model';
+import { Ec2InstanceDetailInfo, SummarizedEc2InstanceModel } from './model';
 import { CacheService } from 'src/cache/cache.service';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class Ec2Service {
     try {
       const command = new DescribeInstancesCommand({});
       const response = await this.ec2Client.send(command);
-      return await response.Reservations.map((instance) => {
+      return response.Reservations.map((instance) => {
         const selectedInstance = instance.Instances[0];
         const instanceName = selectedInstance.Tags[0].Value;
 
@@ -34,6 +34,7 @@ export class Ec2Service {
         const publicDNS = selectedInstance.PublicDnsName ?? '-';
         const publicIP = selectedInstance.PublicIpAddress ?? '-';
         const zone = selectedInstance.Placement.AvailabilityZone;
+        const instanceId = selectedInstance.InstanceId;
 
         return new SummarizedEc2InstanceModel(
           instanceName,
@@ -43,8 +44,25 @@ export class Ec2Service {
           publicDNS,
           publicIP,
           zone,
+          instanceId,
         );
       });
+    } catch (error) {
+      console.error('Error get instance lists:', error);
+      throw new InternalServerErrorException('Unable to get instance lists');
+    }
+  };
+
+  getInstanceDetailInfo = async (id: string) => {
+    const imageList = this.cacheService.get('imageList');
+    try {
+      const command = new DescribeInstancesCommand({ InstanceIds: [id] });
+      const response = await this.ec2Client.send(command);
+      const instance = response.Reservations[0].Instances[0];
+      const image = imageList.find((image) => image.id === instance.ImageId);
+      let imageName = image ? image.name : instance.ImageId;
+      if (imageName === 'ami-09e70258ddbdf3c90') imageName = 'htcondor-master';
+      return new Ec2InstanceDetailInfo(instance, image);
     } catch (error) {
       console.error('Error get instance lists:', error);
       throw new InternalServerErrorException('Unable to get instance lists');

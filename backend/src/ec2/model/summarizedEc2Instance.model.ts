@@ -22,6 +22,9 @@ export class SummarizedEc2InstanceModel {
   @IsString()
   zone: string;
 
+  @IsString()
+  instanceId: string;
+
   constructor(
     instanceName,
     imageName,
@@ -30,6 +33,7 @@ export class SummarizedEc2InstanceModel {
     publicDNS,
     publicIP,
     zone,
+    instanceId,
   ) {
     this.instanceName = instanceName;
     this.imageName = imageName;
@@ -38,5 +42,6 @@ export class SummarizedEc2InstanceModel {
     this.publicDNS = publicDNS;
     this.publicIP = publicIP;
     this.zone = zone;
+    this.instanceId = instanceId;
   }
 }
