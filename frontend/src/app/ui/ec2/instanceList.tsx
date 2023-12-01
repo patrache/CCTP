@@ -123,11 +123,13 @@ function drawInstanceInfo(instance: Array<string>) {
   return (
     <>
       {instance.map((item, index) => {
-        return (
-          <InstanceInfoBody index={index} key={index}>
-            {item === "" ? "-" : item}
-          </InstanceInfoBody>
-        );
+        if (index !== 7) {
+          return (
+            <InstanceInfoBody index={index} key={index}>
+              {item === "" ? "-" : item}
+            </InstanceInfoBody>
+          );
+        }
       })}
     </>
   );
