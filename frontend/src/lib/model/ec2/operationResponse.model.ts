@@ -1,3 +1,3 @@
 class OperationRequestModel {
-  constructor(public test: string) {}
+  constructor(public result: string) {}
 }

@@ -207,7 +207,7 @@ async function buttonAction(
   action: (instanceId: string) => Promise<OperationRequestModel>
 ) {
   const response = await action(instanceId);
-  if (response.test === "complete") {
+  if (response.result === "success") {
     toast.success("success!", {
       position: "top-center",
       autoClose: 2300,
