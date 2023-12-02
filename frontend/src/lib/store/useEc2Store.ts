@@ -11,3 +11,13 @@ export const UseEc2Store = create<Ec2StoreState>((set) => ({
   selectedInstance: null,
   selectInstance: (instance) => set({ selectedInstance: instance }),
 }));
+
+interface ModalState {
+  modalState: boolean;
+  setModalState: (state: boolean) => void;
+}
+
+export const UseModalState = create<ModalState>((set) => ({
+  modalState: false,
+  setModalState: (state) => set({ modalState: state }),
+}));

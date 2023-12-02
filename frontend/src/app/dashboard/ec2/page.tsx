@@ -1,6 +1,7 @@
 "use client";
 
 import InstanceControlButtons from "@/app/ui/ec2/instanceControlButton";
+import InstanceCreateModal from "@/app/ui/ec2/instanceCreateModal";
 import Ec2InstanceDetailInfo from "@/app/ui/ec2/instanceInfo";
 import InstanceList from "@/app/ui/ec2/instanceList";
 import { useState } from "react";
@@ -69,14 +70,15 @@ export default function DashBoardEc2() {
           case "info":
             return <Ec2InstanceDetailInfo/>;
           case "state":
-            return <>state</>;
+            return <>아직 준비 중입니다.</>;
           case "console":
-            return <>console</>;
+            return <>아직 준비 중입니다.</>;
           default:
             return <>somethings wrong...</>;
         }
       })()}
       </InstanceDetail >
+      <InstanceCreateModal/>
     </>
   );
 }
