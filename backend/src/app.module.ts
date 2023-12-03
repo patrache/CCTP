@@ -4,6 +4,7 @@ import { AwsModule } from './aws/aws.module';
 import { ConfigModule } from '@nestjs/config';
 import { Ec2Module } from './ec2/ec2.module';
 import { CacheModule } from './cache/cache.module';
+import { CondorModule } from './condor/condor.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { CacheModule } from './cache/cache.module';
     AwsModule,
     Ec2Module,
     CacheModule,
+    CondorModule,
   ],
   controllers: [],
   providers: [],
