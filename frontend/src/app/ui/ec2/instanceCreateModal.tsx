@@ -1,5 +1,9 @@
+import { createInstance } from "@/lib/api/ec2.api";
 import { UseModalState } from "@/lib/store/useEc2Store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import styled from "styled-components";
 
 const imageList = ["htcondor-slave", "htcondor-master"];
@@ -47,8 +51,8 @@ const ButtonWrapper = styled.div`
 const Button = styled.div`
   color: #484848;
   border-radius: 6px;
-  width: 140px;
-  height: 30px;
+  width: 188px;
+  height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -102,18 +106,52 @@ const ImageNameSelect = styled.select`
 
 const ImageNameOption = styled.option`
   color: #484848;
-  
 `;
+
+async function createInstanceAction(
+  instanceName: string,
+  imageName: string,
+  action: (
+    instanceName: string,
+    imageName: string
+  ) => Promise<OperationRequestModel>
+) {
+  const response = await action(instanceName, imageName);
+  if (response.result === "success") {
+    toast.success("success!", {
+      position: "top-center",
+      autoClose: 2300,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  } else {
+    toast.error("error!", {
+      position: "top-center",
+      autoClose: 2300,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  }
+}
 
 export default function InstanceCreateModal() {
   const modalState = UseModalState((state) => state.modalState);
   const closeModal = UseModalState((state) => state.setModalState);
   const [instanceName, setInstanceName] = useState("");
-  const [imageName, setImageName] = useState("");
+  const [imageName, setImageName] = useState(imageList[0]);
 
   // TODO: Title -> 입력 (이미지 선택 -> 이름 선택) -> 버튼
   return (
     <>
+      <ToastContainer />
       <ModalContainer modalState={modalState} onClick={() => closeModal(false)}>
         <ModalBox onClick={(e) => e.stopPropagation()}>
           <Title>인스턴스 생성</Title>
@@ -126,7 +164,11 @@ export default function InstanceCreateModal() {
           </InputLabel>
           <InputLabel>
             이미지&nbsp;&nbsp;&nbsp; 선택 :{" "}
-            <ImageNameSelect>
+            <ImageNameSelect
+              onChange={(e) => {
+                setImageName(e.target.value);
+              }}
+            >
               {imageList.map((image) => (
                 <ImageNameOption key={image} value={image}>
                   {image}
@@ -136,7 +178,14 @@ export default function InstanceCreateModal() {
           </InputLabel>
           <ButtonWrapper>
             <CloseButton onClick={() => closeModal(false)}>닫기</CloseButton>
-            <SubmitButton>생성</SubmitButton>
+            <SubmitButton
+              onClick={() => {
+                createInstanceAction(instanceName, imageName, createInstance);
+                closeModal(false);
+              }}
+            >
+              생성
+            </SubmitButton>
           </ButtonWrapper>
         </ModalBox>
       </ModalContainer>

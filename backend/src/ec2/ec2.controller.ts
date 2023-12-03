@@ -35,7 +35,7 @@ export class Ec2Controller {
 
   @Get('operation/delete/:id')
   async deleteInstance(@Param() params: any) {
-    const response = await this.ec2Service.stopInstance(params.id);
+    const response = await this.ec2Service.deleteInstance(params.id);
     return response;
   }
 
