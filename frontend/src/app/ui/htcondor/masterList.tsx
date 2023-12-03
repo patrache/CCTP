@@ -26,7 +26,7 @@ function drawMasterItem(masterList: any[] | undefined) {
         return <MasterItem key={instanceIp.ip}>{instanceIp.ip}{"'s cluster"}</MasterItem>
     })
   } else {
-    return <></>;
+    return <MasterItem>something...</MasterItem>;
   }
 }
 

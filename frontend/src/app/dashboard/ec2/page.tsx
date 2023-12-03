@@ -65,20 +65,20 @@ export default function DashBoardEc2() {
         })}
       </InstanceDetailSelectWrapper>
       <InstanceDetail>
-      {(() => {
-        switch (selectedItem) {
-          case "info":
-            return <Ec2InstanceDetailInfo/>;
-          case "state":
-            return <>아직 준비 중입니다.</>;
-          case "console":
-            return <>아직 준비 중입니다.</>;
-          default:
-            return <>somethings wrong...</>;
-        }
-      })()}
-      </InstanceDetail >
-      <InstanceCreateModal/>
+        {(() => {
+          switch (selectedItem) {
+            case "info":
+              return <Ec2InstanceDetailInfo />;
+            case "state":
+              return <>아직 준비 중입니다.</>;
+            case "console":
+              return <>아직 준비 중입니다.</>;
+            default:
+              return <>somethings wrong...</>;
+          }
+        })()}
+      </InstanceDetail>
+      <InstanceCreateModal />
     </>
   );
 }
