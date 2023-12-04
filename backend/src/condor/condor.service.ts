@@ -8,12 +8,16 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { AwsService } from 'src/aws/aws.service';
 import { NodeStatus, TotalStatus } from './model';
 import { QueueModel } from './model/queue.model';
+import { CacheService } from 'src/cache/cache.service';
 
 @Injectable()
 export class CondorService {
   private ec2Client: EC2Client = this.awsService.getEC2Client();
   private ssmClient: SSMClient = this.awsService.getSSMClient();
-  constructor(private awsService: AwsService) {}
+  constructor(
+    private awsService: AwsService,
+    private cacheService: CacheService,
+  ) {}
 
   getMasterList = async () => {
     try {
@@ -52,6 +56,8 @@ export class CondorService {
         await this.fetchInvocationResponse(getCommandInvocation),
         'compute.internal',
       );
+
+      this.cacheService.set('instanceNumber', splitedLine.length);
 
       return splitedLine.map((line) => {
         const [
@@ -143,7 +149,9 @@ export class CondorService {
         'ec2-user ID',
       );
 
-      return splitedLine.map((line) => {
+      let idleCount = 0;
+
+      const response = splitedLine.map((line) => {
         const [
           owner,
           batchName,
@@ -156,6 +164,8 @@ export class CondorService {
           total,
           jobIds,
         ] = line.split(/\s+/);
+        const idleNum = idle === '_' ? '0' : idle;
+        idleCount += parseInt(idleNum);
 
         return new QueueModel(
           owner,
@@ -168,6 +178,9 @@ export class CondorService {
           jobIds,
         );
       });
+      console.log('idleCount', idleCount);
+      this.cacheService.set('idleCount', idleCount);
+      return response;
     } catch (error) {
       console.error('Error get Node status', error);
       throw new InternalServerErrorException('Unable to get Node status');
@@ -177,7 +190,10 @@ export class CondorService {
   // TODO: Refactor this
   getCondorDetailStatus = async (instanceId: string) => {
     try {
-      const command = this.makeSendCommandCommand(instanceId, 'condor_status');
+      const command = this.makeSendCommandCommand(
+        instanceId,
+        'condor_status -long',
+      );
 
       const sendCommandResponse = await this.ssmClient.send(command);
 
@@ -186,35 +202,10 @@ export class CondorService {
         InstanceId: instanceId,
       });
 
-      const splitedLine = this.splitInfoLines(
+      return this.splitInfoLines(
         await this.fetchInvocationResponse(getCommandInvocation),
         'Total',
       );
-
-      return splitedLine.map((line) => {
-        const [
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          nullValue,
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          nullValue2,
-          machines,
-          owner,
-          claimed,
-          unclaimed,
-          matched,
-          preempting,
-          drain,
-        ] = line.split(/\s+/);
-        return new TotalStatus(
-          machines,
-          owner,
-          claimed,
-          unclaimed,
-          matched,
-          preempting,
-          drain,
-        );
-      });
     } catch (error) {
       console.error('Error get Node status', error);
       throw new InternalServerErrorException('Unable to get Node status');
@@ -222,7 +213,7 @@ export class CondorService {
   };
 
   private delay() {
-    return new Promise((resolve) => setTimeout(resolve, 2000));
+    return new Promise((resolve) => setTimeout(resolve, 9000));
   }
 
   private fetchInvocationResponse = async (

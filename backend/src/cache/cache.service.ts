@@ -1,14 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { AutoScaleService } from 'src/auto-scale/auto-scale.service';
 
 @Injectable()
 export class CacheService {
   private cache: Map<string, any>;
 
-  constructor() {
+  constructor(
+    @Inject(forwardRef(() => AutoScaleService))
+    private autoScaleService: AutoScaleService,
+  ) {
     this.cache = new Map();
+    this.set('scaledInstance', []);
   }
 
   set(key: string, value: any) {
+    if (key === 'idleCount') this.autoScaleService.checkAutoScale();
     this.cache.set(key, value);
   }
 

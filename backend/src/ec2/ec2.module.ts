@@ -7,6 +7,7 @@ import { CacheModule } from 'src/cache/cache.module';
 @Module({
   imports: [AwsModule, CacheModule],
   controllers: [Ec2Controller],
+  exports: [Ec2Service],
   providers: [Ec2Service],
 })
 export class Ec2Module {}

@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { Ec2Module } from './ec2/ec2.module';
 import { CacheModule } from './cache/cache.module';
 import { CondorModule } from './condor/condor.module';
+import { AutoScaleModule } from './auto-scale/auto-scale.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { CondorModule } from './condor/condor.module';
     Ec2Module,
     CacheModule,
     CondorModule,
+    AutoScaleModule,
   ],
   controllers: [],
   providers: [],
