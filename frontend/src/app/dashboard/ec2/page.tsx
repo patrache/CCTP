@@ -12,8 +12,8 @@ const DetailList = ["info", "state", "console"];
 const ButtonContainer = styled.div`
   position: absolute;
   top: 50px;
-  left: 1096px;
-  width: 300px;
+  left: 790px;
+  width: 600px;
   height: 50px;
   /* border: 1px solid black; */
   display: flex;

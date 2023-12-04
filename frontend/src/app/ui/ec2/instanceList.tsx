@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import LoadingComponent from "../common/Loading";
 import { type } from "os";
-import { UseEc2Store } from "@/lib/store/useEc2Store";
+import { UseEc2Store, UseInstanceStore } from "@/lib/store/useEc2Store";
 
 const titleItem = [
   "인스턴스 이름",
@@ -143,8 +143,11 @@ function drawInstanceInfo(instance: Array<string>) {
 }
 
 export default function InstanceList() {
-  const [instanceList, setInstanceList] =
-    useState<SummarizedEc2InstanceModel[]>();
+  // const [instanceList, setInstanceList] =
+  //   useState<SummarizedEc2InstanceModel[]>();
+
+  const instanceList = UseInstanceStore((state) => state.instanceList);
+  const setInstanceList = UseInstanceStore((state) => state.setInstanceList);
   const selectedInstance = UseEc2Store((state) => state.selectedInstance);
   const selectEc2 = UseEc2Store((state) => state.selectInstance);
 
@@ -162,7 +165,7 @@ export default function InstanceList() {
   return (
     <>
       <InstanceListContainer>
-        {instanceList === undefined ? (
+        {instanceList === null ? (
           <LoadingComponent />
         ) : (
           <>

@@ -1,3 +1,4 @@
+import exp from "constants";
 import { Ec2DetailInfoModel, SummarizedEc2InstanceModel } from "../model/ec2";
 
 export const getInstanceList = async () => {
@@ -43,6 +44,21 @@ export const startInstance = async (id: string) => {
   return data;
 };
 
+export const startAllInstance = async (instanceIdList: string[]) => {
+  const response = await fetch(`http://localhost:3000/ec2/operation/start/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ instanceIdList: instanceIdList }),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to start all instance");
+  }
+  const data: OperationRequestModel = await response.json();
+  return data;
+};
+
 export const rebootInstance = async (id: string) => {
   const response = await fetch(
     `http://localhost:3000/ec2/operation/reboot/${id}`,
@@ -57,6 +73,21 @@ export const rebootInstance = async (id: string) => {
   return data;
 };
 
+export const rebootAllInstance = async (instanceIdList: string[]) => {
+  const response = await fetch(`http://localhost:3000/ec2/operation/reboot/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ instanceIdList: instanceIdList }),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to reboot all instance");
+  }
+  const data: OperationRequestModel = await response.json();
+  return data;
+}
+
 export const stopInstance = async (id: string) => {
   const response = await fetch(
     `http://localhost:3000/ec2/operation/stop/${id}`,
@@ -65,11 +96,26 @@ export const stopInstance = async (id: string) => {
     }
   );
   if (!response.ok) {
-    throw new Error("Failed to stop instance");
+    throw new Error(`Failed to stop instance: ${response.statusText}`);
   }
   const data: OperationRequestModel = await response.json();
   return data;
 };
+
+export const stopAllInstance = async (instanceIdList: string[]) => {
+  const response = await fetch(`http://localhost:3000/ec2/operation/stop/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ instanceIdList: instanceIdList }),
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to stop all instance: ${response.status} ${response.statusText}`);
+  }
+  const data: OperationRequestModel = await response.json();
+  return data;
+}
 
 export const deleteInstance = async (id: string) => {
   const response = await fetch(
@@ -84,6 +130,21 @@ export const deleteInstance = async (id: string) => {
   const data: OperationRequestModel = await response.json();
   return data;
 };
+
+export const deleteAllInstance = async (instanceIdList: string[]) => {
+  const response = await fetch(`http://localhost:3000/ec2/operation/delete/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ instanceIdList: instanceIdList }),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to delete all instance");
+  }
+  const data: OperationRequestModel = await response.json();
+  return data;
+}
 
 export const createInstance = async (
   instanceName: string,

@@ -77,15 +77,15 @@ const AvailableZone = styled.div<AvailableZoneProps>`
   background-color: ${(props) => {
     switch (props.state) {
       case "available":
-        return "#77dd7780"; // 녹색 계열
+        return "#77dd7780";
       case "information":
-        return "#ffdb96e0"; // 노란색 계열
+        return "#ffdb96e0";
       case "impaired":
-        return "#ffb34780"; // 주황색 계열
+        return "#ffb34780";
       case "unavailable":
-        return "#ff696180"; // 빨간색 계열
+        return "#ff696180";
       default:
-        return "white"; // 기본값은 흰색
+        return "white";
     }
   }};
   border-radius: 10px;

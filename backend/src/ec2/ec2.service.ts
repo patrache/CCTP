@@ -98,6 +98,26 @@ export class Ec2Service {
     }
   };
 
+  startAllInstance = async (id: string[]) => {
+    try {
+      const command = new StartInstancesCommand({
+        InstanceIds: id,
+      });
+      const response = await this.ec2Client.send(command);
+      if (
+        response.StartingInstances[0].CurrentState.Name !==
+        response.StartingInstances[0].PreviousState.Name
+      ) {
+        return { result: 'success' };
+      } else {
+        return { result: 'failed' };
+      }
+    } catch (error) {
+      console.error(`Error start all instance ${id}`, error);
+      return { result: 'failed' };
+    }
+  };
+
   rebootInstance = async (id: string) => {
     try {
       const command = new RebootInstancesCommand({
@@ -111,6 +131,23 @@ export class Ec2Service {
       }
     } catch (error) {
       console.error(`Error reboot instance ${id}`, error);
+      return { result: 'failed' };
+    }
+  };
+
+  rebootAllInstance = async (id: string[]) => {
+    try {
+      const command = new RebootInstancesCommand({
+        InstanceIds: id,
+      });
+      const response = await this.ec2Client.send(command);
+      if (response.$metadata.httpStatusCode === 200) {
+        return { result: 'success' };
+      } else {
+        return { result: 'failed' };
+      }
+    } catch (error) {
+      console.error(`Error reboot all instance ${id}`, error);
       return { result: 'failed' };
     }
   };
@@ -135,6 +172,26 @@ export class Ec2Service {
     }
   };
 
+  stopAllInstance = async (id: string[]) => {
+    try {
+      const command = new StopInstancesCommand({
+        InstanceIds: id,
+      });
+      const response = await this.ec2Client.send(command);
+      if (
+        response.StoppingInstances[0].CurrentState.Name !==
+        response.StoppingInstances[0].PreviousState.Name
+      ) {
+        return { result: 'success' };
+      } else {
+        return { result: 'failed' };
+      }
+    } catch (error) {
+      console.error(`Error stop all instance ${id}`, error);
+      return { result: 'failed' };
+    }
+  };
+
   deleteInstance = async (id: string) => {
     try {
       const command = new TerminateInstancesCommand({
@@ -151,6 +208,26 @@ export class Ec2Service {
       }
     } catch (error) {
       console.error(`Error stop instance ${id}`, error);
+      return { result: 'failed' };
+    }
+  };
+
+  deleteAllInstance = async (id: string[]) => {
+    try {
+      const command = new TerminateInstancesCommand({
+        InstanceIds: id,
+      });
+      const response = await this.ec2Client.send(command);
+      if (
+        response.TerminatingInstances[0].CurrentState.Name !==
+        response.TerminatingInstances[0].PreviousState.Name
+      ) {
+        return { result: 'success' };
+      } else {
+        return { result: 'failed' };
+      }
+    } catch (error) {
+      console.error(`Error stop all instance ${id}`, error);
       return { result: 'failed' };
     }
   };

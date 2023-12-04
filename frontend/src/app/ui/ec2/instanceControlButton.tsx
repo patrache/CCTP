@@ -1,18 +1,30 @@
 import styled from "styled-components";
 import { FaPlus, FaPlay, FaRedoAlt, FaStop, FaPause } from "react-icons/fa";
 import React, { useEffect, useState } from "react";
-import { UseEc2Store, UseModalState } from "@/lib/store/useEc2Store";
 import {
+  UseEc2Store,
+  UseInstanceStore,
+  UseModalState,
+} from "@/lib/store/useEc2Store";
+import {
+  deleteAllInstance,
   deleteInstance,
+  rebootAllInstance,
   rebootInstance,
+  startAllInstance,
   startInstance,
+  stopAllInstance,
   stopInstance,
 } from "@/lib/api/ec2.api";
 import { toast } from "react-toastify";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const buttonList = [
+  "StartAllButton",
+  "RebootAllButotn",
+  "StopAllButton",
+  "DeleteAllButton",
   "StartButton",
   "RebootButotn",
   "StopButton",
@@ -47,7 +59,7 @@ const ButtonWrapper = styled.div<InstanceButtonProps>`
         case "CreateButton":
           return "#BEADFAC0";
         default:
-          return "white";
+          return "#2493BF60";
       }
     } else if (props.state === "stopped") {
       switch (props.role) {
@@ -62,7 +74,7 @@ const ButtonWrapper = styled.div<InstanceButtonProps>`
         case "CreateButton":
           return "#BEADFAC0";
         default:
-          return "white";
+          return "#2493BF60";
       }
     } else if (
       props.state === "terminated" ||
@@ -80,7 +92,7 @@ const ButtonWrapper = styled.div<InstanceButtonProps>`
         case "CreateButton":
           return "#BEADFAC0";
         default:
-          return "white";
+          return "#2493BF60";
       }
     } else if (props.state === "stopping" || props.state === "pending") {
       switch (props.role) {
@@ -95,7 +107,7 @@ const ButtonWrapper = styled.div<InstanceButtonProps>`
         case "CreateButton":
           return "#BEADFAC0";
         default:
-          return "white";
+          return "#2493BF60";
       }
     }
   }};
@@ -138,14 +150,51 @@ function buttonCase(
   stopState: boolean,
   deleteState: boolean,
   setModal: (state: boolean) => void,
+  slaveInstanceList?: string[],
   instanceId?: string
 ) {
-  if (instanceId) {
+  if (instanceId && slaveInstanceList) {
     switch (button) {
+      case "StartAllButton":
+        return (
+          <StartButton
+            onClick={() =>
+              buttonAction2(slaveInstanceList, startAllInstance)
+            }
+          />
+        );
+      case "RebootAllButotn":
+        return (
+          <RebootButton
+            onClick={() =>
+              buttonAction2(slaveInstanceList, rebootAllInstance)
+            }
+          />
+        );
+
+      case "StopAllButton":
+        return (
+          <StopButton
+            onClick={() =>
+              buttonAction2(slaveInstanceList, stopAllInstance)
+            }
+          />
+        );
+
+      case "DeleteAllButton":
+        return (
+          <DeleteButton
+            onClick={() =>
+              buttonAction2(slaveInstanceList, deleteAllInstance)
+            }
+          />
+        );
       case "StartButton":
         return (
           <StartButton
-            onClick={() => (startState ? buttonAction(instanceId, startInstance) : undefined)}
+            onClick={() =>
+              startState ? buttonAction(instanceId, startInstance) : undefined
+            }
           />
         );
       case "RebootButotn":
@@ -176,7 +225,7 @@ function buttonCase(
         return (
           <PlusButton
             onClick={() => {
-              console.log("fuck");
+              console.log("not configed button");
               setModal(true);
             }}
           />
@@ -232,6 +281,36 @@ async function buttonAction(
   }
 }
 
+async function buttonAction2(
+  instanceId: string[],
+  action: (instanceId: string[]) => Promise<OperationRequestModel>
+) {
+  const response = await action(instanceId);
+  if (response.result === "success") {
+    toast.success("success!", {
+      position: "top-center",
+      autoClose: 2300,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  } else {
+    toast.error("error!", {
+      position: "top-center",
+      autoClose: 2300,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  }
+}
+
 export default function InstanceControlButtons() {
   const selectedInstance = UseEc2Store((state) => state.selectedInstance);
   const setModalState = UseModalState((state) => state.setModalState);
@@ -239,6 +318,22 @@ export default function InstanceControlButtons() {
   const [rebootButtonState, setRebootButtonState] = useState<boolean>(false);
   const [stopButtonState, setStopButtonState] = useState<boolean>(false);
   const [deleteButtonState, setDeleteButtonState] = useState<boolean>(false);
+
+  const instanceList = UseInstanceStore((state) => state.instanceList);
+  const [slaveInstanceList, setSlaveInstanceList] = useState<string[]>();
+  
+  useEffect(() => {
+    if (instanceList) {
+      const tempslaveInstanceList = instanceList
+        .filter((instance) => {
+          return instance.imageName === "htcondor-slave";
+        })
+        .map((instance) => {
+          return instance.instanceId;
+        });
+      setSlaveInstanceList(tempslaveInstanceList);
+    }
+  }, [instanceList]);
 
   useEffect(() => {
     if (selectedInstance) {
@@ -279,14 +374,14 @@ export default function InstanceControlButtons() {
 
   return (
     <>
-      <ToastContainer/>
+      <ToastContainer />
       {buttonList.map((button) => (
         <ButtonWrapper
           key={button}
           role={button}
           state={selectedInstance?.state}
         >
-          {selectedInstance
+          {(selectedInstance && slaveInstanceList)
             ? buttonCase(
                 button,
                 startButtonState,
@@ -294,6 +389,7 @@ export default function InstanceControlButtons() {
                 stopButtonState,
                 deleteButtonState,
                 setModalState,
+                slaveInstanceList,
                 selectedInstance.instanceId
               )
             : buttonCase(

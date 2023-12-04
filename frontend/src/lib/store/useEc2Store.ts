@@ -12,6 +12,16 @@ export const UseEc2Store = create<Ec2StoreState>((set) => ({
   selectInstance: (instance) => set({ selectedInstance: instance }),
 }));
 
+interface InstanceStoreState {
+  instanceList: SummarizedEc2InstanceModel[] | null;
+  setInstanceList: (instance: SummarizedEc2InstanceModel[] | null) => void;
+}
+
+export const UseInstanceStore = create<InstanceStoreState>((set) => ({
+  instanceList: null,
+  setInstanceList: (instance) => set({ instanceList: instance }),
+}));
+
 interface ModalState {
   modalState: boolean;
   setModalState: (state: boolean) => void;
