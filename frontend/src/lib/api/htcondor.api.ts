@@ -1,4 +1,4 @@
-import { NodeStatusModel, TotalStatusModel } from "../model/htcondor";
+import { CondorQueueModel, NodeStatusModel, TotalStatusModel } from "../model/htcondor";
 
 export const getMasterInstanceList = async () => {
   const response = await fetch(`http://localhost:3000/condor/masterlist`, {
@@ -33,3 +33,14 @@ export const getTotalStatus = async (instanceId: string) => {
   const data: TotalStatusModel[] = await response.json();
   return data[0];
 };
+
+export const getQueueStatus = async (instanceId: string) => {
+  const response = await fetch(`http://localhost:3000/condor/status/queue/${instanceId}`, {
+    method: "GET",
+  });
+  if (!response.ok) {
+    throw new Error("Failed to get htcondor queue status");
+  }
+  const data: CondorQueueModel[] = await response.json();
+  return data;
+}

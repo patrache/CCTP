@@ -1,2 +1,3 @@
-export * from "./NodeStatus.model";
+export * from "./nodeStatus.model";
 export * from "./totalStatus.model";
+export * from "./condorQueue.model"

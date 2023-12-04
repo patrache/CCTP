@@ -1,5 +1,9 @@
 import { create } from "zustand";
-import { NodeStatusModel, TotalStatusModel } from "../model/htcondor";
+import {
+  CondorQueueModel,
+  NodeStatusModel,
+  TotalStatusModel,
+} from "../model/htcondor";
 
 interface NodeStatusStore {
   nodeStatusModels: NodeStatusModel[] | null;
@@ -21,4 +25,17 @@ export const UseTotalStatusStore = create<TotalStatusStore>((set) => ({
   totalStatusModels: null,
   setTotalStatusModel: (inputTotalStatusModels) =>
     set({ totalStatusModels: inputTotalStatusModels }),
+}));
+
+interface CondorQueueStatusStore {
+  condorQueueStatusModels: CondorQueueModel[] | null;
+  setCondorQueueStatusModel: (
+    CondorQueueStatusModels: CondorQueueModel[] | null
+  ) => void;
+}
+
+export const UseCondorQueueStore = create<CondorQueueStatusStore>((set) => ({
+  condorQueueStatusModels: null,
+  setCondorQueueStatusModel: (inputCondorQueueStatusModels) =>
+    set({ condorQueueStatusModels: inputCondorQueueStatusModels }),
 }));

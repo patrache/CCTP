@@ -7,6 +7,7 @@ import {
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { AwsService } from 'src/aws/aws.service';
 import { NodeStatus, TotalStatus } from './model';
+import { QueueModel } from './model/queue.model';
 
 @Injectable()
 export class CondorService {
@@ -81,6 +82,100 @@ export class CondorService {
   };
 
   getCondorTotalStatus = async (instanceId: string) => {
+    try {
+      const command = this.makeSendCommandCommand(instanceId, 'condor_status');
+
+      const sendCommandResponse = await this.ssmClient.send(command);
+
+      const getCommandInvocation = new GetCommandInvocationCommand({
+        CommandId: sendCommandResponse.Command.CommandId,
+        InstanceId: instanceId,
+      });
+
+      const splitedLine = this.splitInfoLines(
+        await this.fetchInvocationResponse(getCommandInvocation),
+        'Total',
+      );
+
+      return splitedLine.map((line) => {
+        const [
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          nullValue,
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          nullValue2,
+          machines,
+          owner,
+          claimed,
+          unclaimed,
+          matched,
+          preempting,
+          drain,
+        ] = line.split(/\s+/);
+        return new TotalStatus(
+          machines,
+          owner,
+          claimed,
+          unclaimed,
+          matched,
+          preempting,
+          drain,
+        );
+      });
+    } catch (error) {
+      console.error('Error get Node status', error);
+      throw new InternalServerErrorException('Unable to get Node status');
+    }
+  };
+
+  getCondorQueue = async (instanceId: string) => {
+    try {
+      const command = this.makeSendCommandCommand(instanceId, 'condor_q');
+
+      const sendCommandResponse = await this.ssmClient.send(command);
+
+      const getCommandInvocation = new GetCommandInvocationCommand({
+        CommandId: sendCommandResponse.Command.CommandId,
+        InstanceId: instanceId,
+      });
+
+      const splitedLine = this.splitInfoLines(
+        await this.fetchInvocationResponse(getCommandInvocation),
+        'ec2-user ID',
+      );
+
+      return splitedLine.map((line) => {
+        const [
+          owner,
+          batchName,
+          batchName2,
+          submitted,
+          submitted2,
+          done,
+          run,
+          idle,
+          total,
+          jobIds,
+        ] = line.split(/\s+/);
+
+        return new QueueModel(
+          owner,
+          batchName + ' ' + batchName2,
+          submitted + ' ' + submitted2,
+          done,
+          run,
+          idle,
+          total,
+          jobIds,
+        );
+      });
+    } catch (error) {
+      console.error('Error get Node status', error);
+      throw new InternalServerErrorException('Unable to get Node status');
+    }
+  };
+
+  // TODO: Refactor this
+  getCondorDetailStatus = async (instanceId: string) => {
     try {
       const command = this.makeSendCommandCommand(instanceId, 'condor_status');
 
