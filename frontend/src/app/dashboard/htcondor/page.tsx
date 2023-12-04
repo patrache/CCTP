@@ -1,10 +1,12 @@
 "use client";
 
 import CondorNodeStatus from "@/app/ui/htcondor/condorNodeStatus";
+import CondorQueueStatus from "@/app/ui/htcondor/condorQueueStatus";
 import CondorTotalStatus from "@/app/ui/htcondor/condorTotalStatus";
 import MasterList from "@/app/ui/htcondor/masterList";
-import { getNodeStatus, getTotalStatus } from "@/lib/api/htcondor.api";
+import { getNodeStatus, getQueueStatus, getTotalStatus } from "@/lib/api/htcondor.api";
 import {
+  UseCondorQueueStore,
   UseNodeStatusStore,
   UseTotalStatusStore,
 } from "@/lib/store/useCondorStore";
@@ -16,9 +18,9 @@ const DetailList = ["condor_q", "detail", "add job"];
 const CondorDetail = styled.div`
   background-color: white;
   border-radius: 0px 10px 10px 10px;
-  width: 100%;
-  height: 366px;
-  padding: 8px;
+  width: 98%;
+  height: 350px;
+  padding: 16px;
 `;
 
 const CondorDetailSelect = styled.div<{ isSelected: boolean }>`
@@ -36,11 +38,28 @@ const CondorDetailSelectWrapper = styled.div`
 
 export default function DashBoardHTCondor() {
   const [selectedItem, setSelect] = useState("condor_q");
+  const [poolingState, setPoolingState] = useState(false);
   const setNodeStatus = UseNodeStatusStore((state) => state.setNodeStatusModel);
   const setTotalStatus = UseTotalStatusStore(
     (state) => state.setTotalStatusModel
   );
+  const setCondorQueue = UseCondorQueueStore(
+    (state) => state.setCondorQueueStatusModel
+  );
+  const condorQueue = UseCondorQueueStore((state) => state.condorQueueStatusModels);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if(condorQueue){
+        setPoolingState(true);
+      } else {
+        setPoolingState(false);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [condorQueue, poolingState]);
+
+  
   useEffect(() => {
     async function fetchData() {
       const data = await getNodeStatus("i-04ed4cbba0c7747ee");
@@ -56,6 +75,14 @@ export default function DashBoardHTCondor() {
     }
     fetchData();
   });
+
+  useEffect(() => {
+    async function fetchData() {
+      const data = await getQueueStatus("i-04ed4cbba0c7747ee");
+      setCondorQueue(data);
+    }
+    fetchData();
+  }, []);
 
   return (
     <>
@@ -80,7 +107,7 @@ export default function DashBoardHTCondor() {
         {(() => {
           switch (selectedItem) {
             case "condor_q":
-              return <>아직 준비 중입니다.</>;
+              return <CondorQueueStatus/>;
             case "detail":
               return <>아직 준비 중입니다.</>;
             case "add job":

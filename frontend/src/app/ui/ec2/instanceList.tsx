@@ -28,11 +28,7 @@ const InstanceListContainer = styled.div`
   height: 300px;
   background-color: #ffffff;
   border-radius: 10px;
-  overflow: scroll;
   padding: 8px;
-  &::-webkit-scrollbar {
-    display: none;
-  }
 `;
 
 const InstanceInfoRow = styled.div<InstanceItemProps>`
@@ -66,6 +62,15 @@ const InstanceInfo = styled.div<InstanceItemProps>`
 const InstanceInfoHead = styled(InstanceInfo)`
   color: #484848;
   margin: 2px 0px 8px 0px;
+`;
+
+const InstanceInfoBodyWrapper = styled.div`
+  overflow: scroll;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  width: 100%;
+  height: 85%;
 `;
 
 const InstanceInfoBody = styled(InstanceInfo)`
@@ -102,19 +107,21 @@ function drawInstanceBody(
 ) {
   return (
     <>
-      {instanceList.map((instance, index) => {
-        const isSelected = selectedInstance === instance;
-        return (
-          <InstanceInfoRow
-            index={1}
-            key={index}
-            onClick={() => selectEc2(instance)}
-            isSelected={isSelected}
-          >
-            {drawInstanceInfo(Object.values(instance))}
-          </InstanceInfoRow>
-        );
-      })}
+      <InstanceInfoBodyWrapper>
+        {instanceList.map((instance, index) => {
+          const isSelected = selectedInstance === instance;
+          return (
+            <InstanceInfoRow
+              index={1}
+              key={index}
+              onClick={() => selectEc2(instance)}
+              isSelected={isSelected}
+            >
+              {drawInstanceInfo(Object.values(instance))}
+            </InstanceInfoRow>
+          );
+        })}
+      </InstanceInfoBodyWrapper>
     </>
   );
 }
