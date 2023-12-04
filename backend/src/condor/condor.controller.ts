@@ -36,6 +36,11 @@ export class CondorController {
     return await this.condorService.getCondorQueue(params.masterId);
   }
 
+  @Get('/status/detail/:masterId')
+  async getDetailStatus(@Param() params: any) {
+    return await this.condorService.getCondorDetailStatus(params.masterId);
+  }
+
   // TODO: service 만들기 -> ssm으로 command 보내기
   @Post('/upload')
   @UseInterceptors(
@@ -48,7 +53,7 @@ export class CondorController {
   uploadFile(@UploadedFile() file, @Res() res) {
     const filePath = file.path;
     const fileContent = readFileSync(filePath, 'utf8');
-    const cleanedContent = fileContent.replace(/\s+/g, ' ');
+    const cleanedContent = fileContent.split('\n');
 
     res.send(cleanedContent);
   }

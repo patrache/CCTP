@@ -16,7 +16,7 @@ export default function LoadingComponent() {
   return (
     <>
       <Container>
-        <Loader color="#FFE3BB" speedMultiplier={3}></Loader>
+        <Loader color="#FFE3BB" speedMultiplier={2}></Loader>
       </Container>
     </>
   );
