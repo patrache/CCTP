@@ -4,7 +4,11 @@ import CondorNodeStatus from "@/app/ui/htcondor/condorNodeStatus";
 import CondorQueueStatus from "@/app/ui/htcondor/condorQueueStatus";
 import CondorTotalStatus from "@/app/ui/htcondor/condorTotalStatus";
 import MasterList from "@/app/ui/htcondor/masterList";
-import { getNodeStatus, getQueueStatus, getTotalStatus } from "@/lib/api/htcondor.api";
+import {
+  getNodeStatus,
+  getQueueStatus,
+  getTotalStatus,
+} from "@/lib/api/htcondor.api";
 import {
   UseCondorQueueStore,
   UseNodeStatusStore,
@@ -38,7 +42,7 @@ const CondorDetailSelectWrapper = styled.div`
 
 export default function DashBoardHTCondor() {
   const [selectedItem, setSelect] = useState("condor_q");
-  const [poolingState, setPoolingState] = useState(false);
+  const [poolingState, setPoolingState] = useState(0);
   const setNodeStatus = UseNodeStatusStore((state) => state.setNodeStatusModel);
   const setTotalStatus = UseTotalStatusStore(
     (state) => state.setTotalStatusModel
@@ -46,27 +50,46 @@ export default function DashBoardHTCondor() {
   const setCondorQueue = UseCondorQueueStore(
     (state) => state.setCondorQueueStatusModel
   );
-  const condorQueue = UseCondorQueueStore((state) => state.condorQueueStatusModels);
+  const condorQueue = UseCondorQueueStore(
+    (state) => state.condorQueueStatusModels
+  );
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if(condorQueue){
-        setPoolingState(true);
+      if (condorQueue) {
+        setPoolingState(poolingState + 1);
+        console.log(`pooling start : ${poolingState}`);
       } else {
-        setPoolingState(false);
+        setPoolingState(0);
+        console.log("pooling stop");
       }
     }, 1000);
     return () => clearInterval(interval);
   }, [condorQueue, poolingState]);
 
-  
+  useEffect(() => {
+    async function fetchData() {
+      const [nodeData, totalData, queueData] = await Promise.all([
+        getNodeStatus("i-04ed4cbba0c7747ee"),
+        getTotalStatus("i-04ed4cbba0c7747ee"),
+        getQueueStatus("i-04ed4cbba0c7747ee"),
+      ]);
+      if (nodeData) setNodeStatus(nodeData);
+      if (totalData) setTotalStatus(totalData);
+      if (queueData) setCondorQueue(queueData);
+    }
+    if (poolingState % 10 === 0) {
+      fetchData();
+    }
+  }, [poolingState]);
+
   useEffect(() => {
     async function fetchData() {
       const data = await getNodeStatus("i-04ed4cbba0c7747ee");
       setNodeStatus(data);
     }
     fetchData();
-  });
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -74,7 +97,7 @@ export default function DashBoardHTCondor() {
       setTotalStatus(data);
     }
     fetchData();
-  });
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -107,7 +130,7 @@ export default function DashBoardHTCondor() {
         {(() => {
           switch (selectedItem) {
             case "condor_q":
-              return <CondorQueueStatus/>;
+              return <CondorQueueStatus />;
             case "detail":
               return <>아직 준비 중입니다.</>;
             case "add job":
