@@ -1,7 +1,7 @@
 import { BiBarChartAlt2, BiHomeAlt } from "react-icons/bi";
 import { MdOutlineDashboard } from "react-icons/md";
 import { usePathname } from "next/navigation";
-import logo from "@/../public/cctp_logo.png";
+import logo from "/Users/gimsangsu/Desktop/develop/project/noProject/CCTP/frontend/public/cctp_logo.png";
 import styled from "styled-components";
 import Image from "next/image";
 import Link from "next/link";
